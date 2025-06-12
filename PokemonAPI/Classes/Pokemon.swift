@@ -659,6 +659,8 @@ public struct PKMPokemonSprites: Codable, SelfDecodable, Sendable {
 
 /// Pokemon Sprites
 public struct PKMPokemonSpritesBase: Codable, SelfDecodable, Sendable {
+    // The animated version of these sprites, included in blackWhite.
+    public let animated: PKMPokemonSpritesBase?
     
     /// The default depiction of this Pokémon from the front in battle
     public let frontDefault: String?
