@@ -659,7 +659,40 @@ public struct PKMPokemonSprites: Codable, SelfDecodable, Sendable {
 
 /// Pokemon Sprites
 public struct PKMPokemonSpritesBase: Codable, SelfDecodable, Sendable {
-    // The animated version of these sprites, included in blackWhite.
+    /// The default depiction of this Pokémon from the front in battle
+    public let frontDefault: String?
+    
+    /// The shiny depiction of this Pokémon from the front in battle
+    public let frontShiny: String?
+    
+    /// The female depiction of this Pokémon from the front in battle
+    public let frontFemale: String?
+    
+    /// The shiny female depiction of this Pokémon from the front
+    public let frontShinyFemale: String?
+    
+    /// The default depiction of this Pokémon from the back in battle
+    public let backDefault: String?
+    
+    /// The shiny depiction of this Pokémon from the back in battle
+    public let backShiny: String?
+    
+    /// The female depiction of this Pokémon from the back in battle
+    public let backFemale: String?
+    
+    /// The shiny female depiction of this Pokémon from the back in battle
+    public let backShinyFemale: String?
+    
+    public static let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }()
+}
+
+/// Pokemon Sprites Animated
+public struct PKMPokemonSpritesAnimatedBase: Codable, SelfDecodable, Sendable {
+    /// The animated depictions of this Pokémon
     public let animated: PKMPokemonSpritesBase?
     
     /// The default depiction of this Pokémon from the front in battle
@@ -781,7 +814,7 @@ public struct PKMPokemonSpritesVersionsGeneration5: Codable, Sendable {
         case blackWhite = "black-white"
     }
     
-    public let blackWhite: PKMPokemonSpritesBase?
+    public let blackWhite: PKMPokemonSpritesAnimatedBase?
 }
 
 public struct PKMPokemonSpritesVersionsGeneration6: Codable, Sendable {
