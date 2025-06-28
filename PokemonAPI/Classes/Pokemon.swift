@@ -418,7 +418,7 @@ public struct PKMPokemon: Codable, SelfDecodable, Sendable {
     public let heldItems: [PKMPokemonHeldItem]?
     
     /// A list of location areas as well as encounter details pertaining to specific versions
-    public let locationAreaEncounters: [PKMAPIResource<PKMLocationAreaEncounter>]?
+    public let locationAreaEncounters: String?
     
     /// A list of moves along with learn methods and level details pertaining to specific version groups
     public let moves: [PKMPokemonMove]?
