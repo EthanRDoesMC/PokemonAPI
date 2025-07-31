@@ -418,8 +418,9 @@ public struct PKMPokemon: Codable, SelfDecodable, Sendable {
     public let heldItems: [PKMPokemonHeldItem]?
     
     /// A list of location areas as well as encounter details pertaining to specific versions
-    public let locationAreaEncounters: String?
-    
+    // Note to the maintainer: This is usually provided as a string, a link to the list. However, this is the only instance of it, and it's not easy to work with. I have provided custom decoding in this struct (PKMPokemon)'s init to bring it in line with the rest of the package.
+    public let locationAreaEncounters: PKMAPIResource<[PKMLocationAreaEncounter]>?
+
     /// A list of moves along with learn methods and level details pertaining to specific version groups
     public let moves: [PKMPokemonMove]?
     
@@ -449,6 +450,41 @@ public struct PKMPokemon: Codable, SelfDecodable, Sendable {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // Standard decoding, nothing special
+        id = try container.decodeIfPresent(Int.self, forKey: .id)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        baseExperience = try container.decodeIfPresent(Int.self, forKey: .baseExperience)
+        height = try container.decodeIfPresent(Int.self, forKey: .height)
+        isDefault = try container.decodeIfPresent(Bool.self, forKey: .isDefault)
+        order = try container.decodeIfPresent(Int.self, forKey: .order)
+        weight = try container.decodeIfPresent(Int.self, forKey: .weight)
+        abilities = try container.decodeIfPresent([PKMPokemonAbility].self, forKey: .abilities)
+        forms = try container.decodeIfPresent([PKMAPIResource<PKMPokemonForm>].self, forKey: .forms)
+        gameIndices = try container.decodeIfPresent([PKMVersionGameIndex].self, forKey: .gameIndices)
+        heldItems = try container.decodeIfPresent([PKMPokemonHeldItem].self, forKey: .heldItems)
+        moves = try container.decodeIfPresent([PKMPokemonMove].self, forKey: .moves)
+        pastTypes = try container.decodeIfPresent([PKMPokemonTypePast].self, forKey: .pastTypes) ?? []
+        pastAbilities = try container.decodeIfPresent([PKMPokemonAbilityPast].self, forKey: .pastAbilities) ?? []
+        sprites = try container.decodeIfPresent(PKMPokemonSprites.self, forKey: .sprites)
+        species = try container.decodeIfPresent(PKMAPIResource<PKMPokemonSpecies>.self, forKey: .species)
+        cries = try container.decodeIfPresent(PKMPokemonCries.self, forKey: .cries)
+        stats = try container.decodeIfPresent([PKMPokemonStat].self, forKey: .stats)
+        types = try container.decodeIfPresent([PKMPokemonType].self, forKey: .types)
+
+        // PokeAPI provides this as a string of the format "/api/v2/pokemon/(ID)/encounters"
+        // and not as an API resource. This is the only occurance of this.
+        // I'm electing to make a single exception here in this decoder
+        // because this could always change to be normal in the future.
+        if let url = try container.decodeIfPresent(String.self, forKey: .locationAreaEncounters) {
+            locationAreaEncounters = PKMAPIResource<[PKMLocationAreaEncounter]>(url: "https://pokeapi.co\(url)", name: nil)
+        } else {
+            locationAreaEncounters = nil
+        }
+    }
 }
 
 
@@ -690,9 +726,11 @@ public struct PKMPokemonSpritesBase: Codable, SelfDecodable, Sendable {
     }()
 }
 
-/// Pokemon Sprites Animated
+
+/// Pokemon Animated Sprites for Generation V
 public struct PKMPokemonSpritesAnimatedBase: Codable, SelfDecodable, Sendable {
-    /// The animated depictions of this Pokémon
+
+    /// The animated depictions of this Pokémon in battle
     public let animated: PKMPokemonSpritesBase?
     
     /// The default depiction of this Pokémon from the front in battle
