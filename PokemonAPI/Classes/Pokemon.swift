@@ -480,7 +480,7 @@ public struct PKMPokemon: Codable, SelfDecodable, Sendable {
         // I'm electing to make a single exception here in this decoder
         // because this could always change to be normal in the future.
         if let url = try container.decodeIfPresent(String.self, forKey: .locationAreaEncounters) {
-            locationAreaEncounters = PKMAPIResource<[PKMLocationAreaEncounter]>(url: "https://pokeapi.co\(url)", name: nil)
+            locationAreaEncounters = PKMAPIResource<[PKMLocationAreaEncounter]>(url: url, name: nil)
         } else {
             locationAreaEncounters = nil
         }
