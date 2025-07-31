@@ -889,7 +889,11 @@ public struct PKMPokemonSpritesVersionsGeneration9: Codable, Sendable {
 
 /// Location Area Encounter
 public struct PKMLocationAreaEncounter: Codable, SelfDecodable, Sendable {
-    
+    enum CodingKeys: String, CodingKey {
+        case locationArea = "location_area"
+        case versionDetails = "version_details"
+    }
+
     /// The location area the referenced Pokémon can be encountered in
     public let locationArea: PKMAPIResource<PKMLocationArea>?
     
